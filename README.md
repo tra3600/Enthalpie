@@ -1,55 +1,40 @@
 # Enthalpie
-illustre l'enthalpie libre en chimie et calcul sur une réaction élémentaire
 
-Pour illustrer les notions d'enthalpie ((H)) et d'enthalpie libre ((G)) en chimie, nous allons écrire un programme Python qui simule une réaction chimique et calcule les valeurs d'enthalpie et d'enthalpie libre. Nous utiliserons les équations thermodynamiques suivantes :
+Calcule l'enthalpie (ΔH°), l'entropie (ΔS°), l'enthalpie libre (ΔG = ΔH − TΔS),
+la constante d'équilibre (K = exp(−ΔG/RT)), la température d'inversion et la
+spontanéité d'une réaction chimique à partir de données standard (298,15 K).
 
-Enthalpie ((H)) :
+Aucune dépendance externe (Python 3.8+).
 
-Δ
-H
-=
-∑
-Δ
-H
-produits
-−
-∑
-Δ
-H
-réactifs
-Enthalpie libre ((G)) :
+## Utilisation
 
-Δ
-G
-=
-Δ
-H
-−
-T
-Δ
-S
-où (T) est la température en Kelvin et (\Delta S) est la variation d'entropie.
+```bash
+python Enthalpie.py "2 H2 + O2 -> 2 H2O(g)"
+python Enthalpie.py "CaCO3 -> CaO + CO2" -T 298.15 1200
+python Enthalpie.py "N2 + 3 H2 -> 2 NH3" --plage 300 900 100
+python Enthalpie.py --liste                       # espèces connues
+python Enthalpie.py "A -> B" --donnees mes_donnees.json
+```
 
-Prérequis
-Nous n'avons besoin d'aucune bibliothèque externe pour ce programme.
+- L'état physique peut être omis s'il est non ambigu (`H2O` demande `(l)` ou `(g)`).
+- L'équilibrage de l'équation est vérifié (avertissement sinon).
+- Fichier `--donnees` : `{"X(g)": [ΔfH en kJ/mol, S en J/mol/K]}`.
 
-Code
-Voici un programme Python qui simule une réaction chimique et calcule les valeurs d'enthalpie et d'enthalpie libre :
+## En Python
 
-Explications
-Classe ChemicalReaction :
+```python
+from Enthalpie import ChemicalReaction
+r = ChemicalReaction.from_equation("CaCO3 -> CaO + CO2")
+r.calculate_delta_H(); r.calculate_delta_G(1200); r.inversion_temperature()
+```
 
-__init__ : Initialise les réactifs, les produits, les enthalpies de formation et les entropies.
-calculate_delta_H : Calcule la variation d'enthalpie (\Delta H) de la réaction en utilisant les enthalpies de formation des produits et des réactifs.
-calculate_delta_S : Calcule la variation d'entropie (\Delta S) de la réaction en utilisant les entropies standard des produits et des réactifs.
-calculate_delta_G : Calcule la variation d'enthalpie libre (\Delta G) en utilisant (\Delta H), (\Delta S) et la température.
-Fonction main :
+## Hypothèse
 
-Définit un exemple de réaction chimique (formation de l'eau à partir de l'hydrogène et de l'oxygène).
-Initialise les enthalpies de formation standard et les entropies standard des réactifs et des produits.
-Crée une instance de ChemicalReaction avec les données fournies.
-Calcule et affiche (\Delta H), (\Delta S) et (\Delta G).
-Utilisation
-Exécutez le script Python.
-Le programme calculera les valeurs d'enthalpie ((\Delta H)), d'entropie ((\Delta S)) et d'enthalpie libre ((\Delta G)) pour la réaction chimique spécifiée.
-Ce programme offre une base pour comprendre les concepts d'enthalpie et d'enthalpie libre en chimie. Vous pouvez le modifier pour inclure d'autres réactions chimiques et explorer comment les variations de température affectent (\Delta G).
+ΔH° et ΔS° sont supposés indépendants de la température (approximation d'Ellingham) ;
+les résultats loin de 298 K sont donc approximatifs.
+
+## Tests
+
+```bash
+python -m unittest
+```
